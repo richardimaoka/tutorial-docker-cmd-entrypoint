@@ -5,6 +5,11 @@
 # docker run cmd1
 # docker inspect cmd1 --format='CMD {{.Config.Cmd}}'
 
+PARAM=cmd1
+cat << EOF
+docker build -t $PARAM -f Dockerfi.cmd
+EOF
+
 # # CMD ["echo", "abc", "def"]
 # docker build -t cmd2 -f Dockerfile.cmd2 .
 # docker images --filter=reference='cmd*'
