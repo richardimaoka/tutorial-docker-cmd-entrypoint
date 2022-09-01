@@ -10,24 +10,12 @@ docker run cmd1
 docker inspect cmd1 --format='CMD {{.Config.Cmd}}'
 """.format(comment=comment, suffix=suffix, category=category).strip()
 
-    return str
+    print(str)
 
 
 def main():
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
-    print(template(suffix="cmd1", category="cmd",
-          comment='CMD ["echo", "abc"]'))
+    template(suffix="cmd1", category="cmd", comment='CMD ["echo", "abc"]')
+    template(suffix="cmd1", category="cmd", comment='CMD ["echo", "abc"]')
 
 
 if __name__ == "__main__":

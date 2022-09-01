@@ -75,7 +75,7 @@ docker stop cnt-cmd8
 
 
 # # ENTRYPOINT ["echo", "abc"]
-# docker build -t entrypoint1 -f Dockerfile.cmd1 .
+# docker build -t entrypoint1 -f Dockerfile.entrypoint1 .
 # docker images --filter=reference='entrypoint*'
 # docker run entrypoint1
 # docker inspect entrypoint1 --format='CMD {{.Config.Cmd}}'
@@ -137,14 +137,16 @@ docker stop cnt-entrypoint8
 # ENTRYPOINT ["echo"] CMD ["abc"]
 docker build -t cmd-and-entrypoint1 -f Dockerfile.cmd-and-entrypoint1 .
 docker images --filter=reference='cmd-and-entrypoint*'
-docker run cmd-and-entrypoint1 
+docker run cmd-and-entrypoint1
 # abc
 docker run cmd-and-entrypoint1 def
 # def
 
-docker run entrypoint1 def
-docker run cmd1 def # error
+docker run cmd1 def 
+# error
 
+docker run entrypoint1 def
+# abc def
 
 # docker run cmd1 efg # ERROR!!
 # docker: Error response from daemon: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: exec: "efg": executable file not found in $PATH: unknown.
