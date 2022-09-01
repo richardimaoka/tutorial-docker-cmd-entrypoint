@@ -118,3 +118,15 @@ ps -eaf
 # root         9     0  0 21:29 pts/0    00:00:00 /bin/sh
 # root        15     9  0 21:29 pts/0    00:00:00 ps -eaf
 docker stop cnt-entrypoint8
+
+
+docker run entrypoint1 def
+docker run cmd1 def # error
+
+docker build -t cmd-and-entrypoint1 -f Dockerfile.cmd-and-entrypoint1 .
+docker run cmd-and-entrypoint1
+docker run cmd-and-entrypoint1 ghi #ignoring CMD
+
+docker build -t cmd-and-entrypoint2 -f Dockerfile.cmd-and-entrypoint2 .
+docker inspect cmd-and-entrypoint1 --format=".Config.Cmd"
+docker inspect cmd-and-entrypoint2 --format=".Config.Cmd"
