@@ -35,6 +35,16 @@
 # docker run cmd6
 # docker inspect cmd6 --format='CMD {{.Config.Cmd}}'
 
+# SIGTERM not received with shell form 
+docker run nginx:1.21
+# Ctrl + c
+
+docker build -t nginx:cmd-shellform -f Dockerfile.cmd-nginx .
+docker run --name cnt-nginx-shellform nginx:cmd-shellform
+# Ctrl + c, not working!!
+docker stop cnt-nginx-shellform
+
+# CMD ["tail", "-f", "/dev/null"] 
 docker build -t cmd7 -f Dockerfile.cmd7 .
 docker run -d --name cnt-cmd7 cmd7
 docker exec -it cnt-cmd7 /bin/sh
@@ -57,7 +67,6 @@ ps -eaf
 # root         9     0  0 21:29 pts/0    00:00:00 /bin/sh
 # root        15     9  0 21:29 pts/0    00:00:00 ps -eaf
 docker stop cnt-cmd8
-
 
 
 # # ENTRYPOINT ["echo", "abc"]
@@ -120,8 +129,22 @@ ps -eaf
 docker stop cnt-entrypoint8
 
 
+# ENTRYPOINT ["echo"] CMD ["abc"]
+docker build -t cmd-and-entrypoint1 -f Dockerfile.cmd-and-entrypoint1 .
+docker images --filter=reference='cmd-and-entrypoint*'
+docker run cmd-and-entrypoint1 
+# abc
+docker run cmd-and-entrypoint1 def
+# def
+
 docker run entrypoint1 def
 docker run cmd1 def # error
+
+
+# docker run cmd1 efg # ERROR!!
+# docker: Error response from daemon: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: exec: "efg": executable file not found in $PATH: unknown.
+# ERRO[0000] error waiting for container: context canceled
+
 
 docker build -t cmd-and-entrypoint1 -f Dockerfile.cmd-and-entrypoint1 .
 docker run cmd-and-entrypoint1
@@ -129,4 +152,4 @@ docker run cmd-and-entrypoint1 ghi #ignoring CMD
 
 docker build -t cmd-and-entrypoint2 -f Dockerfile.cmd-and-entrypoint2 .
 docker inspect cmd-and-entrypoint1 --format=".Config.Cmd"
-docker inspect cmd-and-entrypoint2 --format=".Config.Cmd"
+docker inspect cmd-and-entrypoint2 --format=".Config.Cmd"# 
