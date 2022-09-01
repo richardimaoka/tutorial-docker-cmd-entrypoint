@@ -1,0 +1,2 @@
+FROM cmd-and-entrypoint1
+CMD [ "ping" ]
