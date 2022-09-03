@@ -1,2 +1,2 @@
-FROM cmd-and-entrypoint1
-ENTRYPOINT [ "ping" ]
+FROM centos
+ENTRYPOINT [ "ping", "localhost" ]

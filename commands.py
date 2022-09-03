@@ -1,3 +1,6 @@
+from http.cookies import Morsel
+
+
 def dockerfile(filename):
     with open(filename, 'r') as f:
         contents = f.read()
@@ -8,20 +11,25 @@ def dockerfile(filename):
     print(str)
 
 
-def docker_commands(suffix):
+def docker_commands(suffix, extra_args):
+    more_args = ""
+    if len(extra_args) != 0:
+        for arg in extra_args:
+            more_args += " " + arg
+
     str = """
 
-```:以下のコマンドを実行してください。
+```:以下のコマンドを実行してください
 docker build -t {suffix} -f Dockerfile.{suffix} .
-docker run --name cnt-{suffix} --rm {suffix}
+docker run --rm {suffix}{more_args}
 ```
-""".format(suffix=suffix).strip() + "\n"
+""".format(suffix=suffix, more_args=more_args).strip() + "\n"
     print(str)
 
 
-def template(suffix, result=None):
+def template(suffix, result=None, extra_args=[]):
     dockerfile("Dockerfile." + suffix)
-    docker_commands(suffix)
+    docker_commands(suffix, extra_args)
     if result is not None:
         print("""
 ```:コマンドの実行結果
@@ -141,17 +149,23 @@ def main():
     # template("cmd7")  # CMD tail - f / dev/null
     # template("cmd8")  # CMD["tail", "-f", "/dev/null"]
 
-    template("entrypoint1",  "abc")  # ENTRYPOINT ["echo", "abc"]
-    template("entrypoint2",  "abc def")  # ENTRYPOINT ["cho", "abc", "def]
-    template("entrypoint3",  "abc")  # ENTRYPOINT echo abc
-    template("entrypoint4",  "abc def")  # ENTRYPOINT echo abc def
-    template("entrypoint5",  "/home/your_username")  # ENTRYPOINT echo "$HOME"
-    # ENTRYPOINT ["sh", "-c", "echo $HOME"]
-    template("entrypoint6", "/home/your_username")
-    template("entrypoint-nginx1")  # ENTRYPOINT [ "nginx", "-g", "daemon off;"]
-    template("entrypoint-nginx2")  # ENTRYPOINT nginx -g "daemon off;"
-    template("entrypoint7")  # ENTRYPOINT tail - f / dev/null
-    template("entrypoint8")  # ENTRYPOINT["tail", "-f", "/dev/null"]
+    # template("entrypoint1",  "abc")  # ENTRYPOINT ["echo", "abc"]
+    # template("entrypoint2",  "abc def")  # ENTRYPOINT ["cho", "abc", "def]
+    # template("entrypoint3",  "abc")  # ENTRYPOINT echo abc
+    # template("entrypoint4",  "abc def")  # ENTRYPOINT echo abc def
+    # template("entrypoint5",  "/home/your_username")  # ENTRYPOINT echo "$HOME"
+    # # ENTRYPOINT ["sh", "-c", "echo $HOME"]
+    # template("entrypoint6", "/home/your_username")
+    # template("entrypoint-nginx1")  # ENTRYPOINT [ "nginx", "-g", "daemon off;"]
+    # template("entrypoint-nginx2")  # ENTRYPOINT nginx -g "daemon off;"
+    # template("entrypoint7")  # ENTRYPOINT tail - f / dev/null
+    # template("entrypoint8")  # ENTRYPOINT["tail", "-f", "/dev/null"]
+
+    template("cmd-and-entrypoint1",  "abc")  # ENTRYPOINT ["echo", "abc"]
+    template("cmd1",  "ERROR")
+    template("entrypoint1", "abc def", ["def"])
+    template("cmd-and-entrypoint2")
+    template("cmd-and-entrypoint3")
 
 
 if __name__ == "__main__":
