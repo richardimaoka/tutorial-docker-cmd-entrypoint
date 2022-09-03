@@ -129,17 +129,29 @@ docker stop cnt-cmd-nginx
 
 
 def main():
-    template("cmd1",  "abc")  # CMD ["echo", "abc"]
-    template("cmd2",  "abc def")  # CMD ["cho", "abc", "def]
-    template("cmd3",  "abc")  # CMD echo abc
-    template("cmd4",  "abc def")  # CMD echo abc def
-    template("cmd5",  "/home/your_username")  # CMD echo "$HOME"
-    template("cmd6", "/home/your_username")  # CMD ["sh", "-c", "echo $HOME"]
-    nginx()
-    template("cmd-nginx")  # CMD ["sh", "-c", "echo $HOME"]
-    nginx_nonstop()
-    template("cmd7")  # CMD tail - f / dev/null
-    template("cmd8")  # CMD["tail", "-f", "/dev/null"]
+    # template("cmd1",  "abc")  # CMD ["echo", "abc"]
+    # template("cmd2",  "abc def")  # CMD ["cho", "abc", "def]
+    # template("cmd3",  "abc")  # CMD echo abc
+    # template("cmd4",  "abc def")  # CMD echo abc def
+    # template("cmd5",  "/home/your_username")  # CMD echo "$HOME"
+    # template("cmd6", "/home/your_username")  # CMD ["sh", "-c", "echo $HOME"]
+    # nginx()
+    # template("cmd-nginx")  # CMD ["sh", "-c", "echo $HOME"]
+    # nginx_nonstop()
+    # template("cmd7")  # CMD tail - f / dev/null
+    # template("cmd8")  # CMD["tail", "-f", "/dev/null"]
+
+    template("entrypoint1",  "abc")  # ENTRYPOINT ["echo", "abc"]
+    template("entrypoint2",  "abc def")  # ENTRYPOINT ["cho", "abc", "def]
+    template("entrypoint3",  "abc")  # ENTRYPOINT echo abc
+    template("entrypoint4",  "abc def")  # ENTRYPOINT echo abc def
+    template("entrypoint5",  "/home/your_username")  # ENTRYPOINT echo "$HOME"
+    # ENTRYPOINT ["sh", "-c", "echo $HOME"]
+    template("entrypoint6", "/home/your_username")
+    template("entrypoint-nginx1")  # ENTRYPOINT [ "nginx", "-g", "daemon off;"]
+    template("entrypoint-nginx2")  # ENTRYPOINT nginx -g "daemon off;"
+    template("entrypoint7")  # ENTRYPOINT tail - f / dev/null
+    template("entrypoint8")  # ENTRYPOINT["tail", "-f", "/dev/null"]
 
 
 if __name__ == "__main__":
