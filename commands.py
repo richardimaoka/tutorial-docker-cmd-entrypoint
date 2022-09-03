@@ -11,9 +11,7 @@ def dockerfile(filename):
 def docker_commands(suffix, category):
     str = """
 
-以下のコマンドを実行してください。
-
-```sh
+```:以下のコマンドを実行してください。
 docker build -t {suffix} -f Dockerfile.{suffix} .
 docker run {suffix}
 ```
@@ -26,40 +24,35 @@ def template(suffix, category, result=None):
     docker_commands(suffix, category)
     if result is not None:
         print("""
-```sh:docker runの結果        g
+```:コマンドの実行結果
 {result}
 ```
-        """.format(result=result).strip() + "\n")
+""".format(result=result).strip() + "\n")
 
 
 def main():
     template("cmd1", "cmd", "abc")  # CMD ["echo", "abc"]
-    template("cmd2", "cmd")  # CMD ["cho", "abc", "def]
-    template("cmd3", "cmd")  # CMD echo abc
-    template("cmd4", "cmd")  # CMD echo abc def
+    template("cmd2", "cmd", "abc def")  # CMD ["cho", "abc", "def]
+    template("cmd3", "cmd", "abc")  # CMD echo abc
+    template("cmd4", "cmd", "abc def")  # CMD echo abc def
     template("cmd5", "cmd")  # CMD echo "$HOME"
     template("cmd6", "cmd")  # CMD ["sh", "-c", "echo $HOME"]
     print("""
-```sh
-# SIGTERM not received with shell form
+```:以下のコマンドを実行してください。
 docker run nginx:1.21
 ```
 
-以下のショートカットを実行してください。
-
-```sh
+```:以下のショートカットを実行してください。
 # Ctrl + c 
 ```
 
-以下のコマンドを実行してください。
-
-````sh
+```:以下のコマンドを実行してください。
 docker build - t nginx: cmd-shellform - f Dockerfile.cmd-nginx .
 docker run - -name cnt-nginx-shellform nginx: cmd-shellform
 # Ctrl + c, not working!!
 ```
 
-```sh:another terminal
+```:以下のコマンドを実行してください。
 docker stop cnt-nginx-shellform
 """)
     template("cmd7", "cmd")  # CMD ["echo", "abc", "def]
