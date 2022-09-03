@@ -8,20 +8,20 @@ def dockerfile(filename):
     print(str)
 
 
-def docker_commands(suffix, category):
+def docker_commands(suffix):
     str = """
 
 ```:以下のコマンドを実行してください。
 docker build -t {suffix} -f Dockerfile.{suffix} .
-docker run {suffix}
+docker run --name cnt-{suffix} --rm {suffix}
 ```
-""".format(suffix=suffix, category=category).strip() + "\n"
+""".format(suffix=suffix).strip() + "\n"
     print(str)
 
 
-def template(suffix, category, result=None):
+def template(suffix, result=None):
     dockerfile("Dockerfile." + suffix)
-    docker_commands(suffix, category)
+    docker_commands(suffix)
     if result is not None:
         print("""
 ```:コマンドの実行結果
@@ -30,34 +30,116 @@ def template(suffix, category, result=None):
 """.format(result=result).strip() + "\n")
 
 
-def main():
-    template("cmd1", "cmd", "abc")  # CMD ["echo", "abc"]
-    template("cmd2", "cmd", "abc def")  # CMD ["cho", "abc", "def]
-    template("cmd3", "cmd", "abc")  # CMD echo abc
-    template("cmd4", "cmd", "abc def")  # CMD echo abc def
-    template("cmd5", "cmd")  # CMD echo "$HOME"
-    template("cmd6", "cmd")  # CMD ["sh", "-c", "echo $HOME"]
+def nginx():
     print("""
-```:以下のコマンドを実行してください。
-docker run nginx:1.21
+
+```:以下のコマンドを実行してください
+docker run nginx:1.23.1
 ```
 
-```:以下のショートカットを実行してください。
-# Ctrl + c 
+これで、nginx によるウェブサーバーが立ち上がります。
+
+```:コマンド実行結果
+2022/09/03 07:14:58 [notice] 1#1: using the "epoll" event method
+2022/09/03 07:14:58 [notice] 1#1: nginx/1.23.1
+2022/09/03 07:14:58 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)
+2022/09/03 07:14:58 [notice] 1#1: OS: Linux 5.10.102.1-microsoft-standard-WSL2
+2022/09/03 07:14:58 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2022/09/03 07:14:58 [notice] 1#1: start worker processes
+2022/09/03 07:14:58 [notice] 1#1: start worker process 31
+2022/09/03 07:14:58 [notice] 1#1: start worker process 32
+2022/09/03 07:14:58 [notice] 1#1: start worker process 33
+2022/09/03 07:14:58 [notice] 1#1: start worker process 34
+2022/09/03 07:14:58 [notice] 1#1: start worker process 35
+2022/09/03 07:14:58 [notice] 1#1: start worker process 36
+2022/09/03 07:14:58 [notice] 1#1: start worker process 37
+2022/09/03 07:14:58 [notice] 1#1: start worker process 38
 ```
 
-```:以下のコマンドを実行してください。
-docker build - t nginx: cmd-shellform - f Dockerfile.cmd-nginx .
-docker run - -name cnt-nginx-shellform nginx: cmd-shellform
-# Ctrl + c, not working!!
+nginx を停止してみましょう。
+
+```:以下のショートカットを実行してください
+Ctrl + c
 ```
 
-```:以下のコマンドを実行してください。
-docker stop cnt-nginx-shellform
+これで SIGINT が送られ…
+
+```:ショートカット実行結果
+2022/09/03 07:15:40 [notice] 1#1: signal 2 (SIGINT) received, exiting
+2022/09/03 07:15:40 [notice] 1#1: signal 14 (SIGALRM) received
+...
+...
+2022/09/03 07:15:40 [notice] 1#1: worker process 38 exited with code 0
+2022/09/03 07:15:40 [notice] 1#1: exit
+```
+
+…nginx が停止しました。
+
+
+Ctrl+c できれいに停止できるのは、nginx の docker イメージが CMD の exec form を使っているからです。
+
+```:以下のコマンドを実行してください
+docker inspect nginx
+```
+
+CMD の exec form を使っていることが確認できます。
+
+```:コマンド実行結果
+"Config": {
+    "Cmd": [
+        "nginx",
+        "-g",
+        "daemon off;"
+    ]
+}
+```
+
 """)
-    template("cmd7", "cmd")  # CMD ["echo", "abc", "def]
-    template("cmd8", "cmd")  # CMD["tail", "-f", "/dev/null"]
-    template("cmd9", "cmd")  # CMD tail - f / dev/null
+
+
+def nginx_nonstop():
+    print("""
+```:以下のショートカットを実行してください
+Ctrl + c
+```
+
+```実行結果
+2022/09/03 05:48:46 [notice] 7#7: start worker process 13
+2022/09/03 05:48:46 [notice] 7#7: start worker process 14
+2022/09/03 05:48:46 [notice] 7#7: start worker process 15
+^C
+```
+
+nginx が停止しません！
+
+コレを停止するには、別ターミナルでdocker stopを実行する必要があります。
+
+```:別ターミナルで、以下のコマンドを実行してください
+docker stop cnt-cmd-nginx
+```
+
+先ほどと違って`signal 2 (SIGINT) received, exiting`とは表示されずに、急にnginxのログが出力されなくなり停止しているのがわかると思います。
+
+```コマンド実行結果
+2022/09/03 05:48:46 [notice] 7#7: start worker process 14
+2022/09/03 05:48:46 [notice] 7#7: start worker process 15
+```
+
+""")
+
+
+def main():
+    template("cmd1",  "abc")  # CMD ["echo", "abc"]
+    template("cmd2",  "abc def")  # CMD ["cho", "abc", "def]
+    template("cmd3",  "abc")  # CMD echo abc
+    template("cmd4",  "abc def")  # CMD echo abc def
+    template("cmd5",  "/home/your_username")  # CMD echo "$HOME"
+    template("cmd6", "/home/your_username")  # CMD ["sh", "-c", "echo $HOME"]
+    nginx()
+    template("cmd-nginx")  # CMD ["sh", "-c", "echo $HOME"]
+    nginx_nonstop()
+    template("cmd7")  # CMD tail - f / dev/null
+    template("cmd8")  # CMD["tail", "-f", "/dev/null"]
 
 
 if __name__ == "__main__":
